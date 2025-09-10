@@ -4,6 +4,7 @@ import { expressMiddleware } from "@as-integrations/express5";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
+import accountRoutes from "./routes/accountRoutes.js";
 import { typeDefs, resolvers } from "./graphql/schema.js";
 import { authMiddleware } from "./middleware/auth.js";
 
@@ -14,10 +15,14 @@ app.use(express.json());
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  introspection: true,
 });
 
 const startServer = async () => {
   await server.start();
+
+  app.use("/api/accounts", accountRoutes);
+
   app.use(
     "/graphql",
     expressMiddleware(server, {
