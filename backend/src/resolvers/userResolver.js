@@ -1,6 +1,7 @@
 import Joi from "joi";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import bcrypt from "bcryptjs";
 
 const userSchema = Joi.object({
   name: Joi.string().min(3).required(),
@@ -44,19 +45,30 @@ export const userResolver = {
       }
     },
     updateUser: async (_, { id, input }, { user }) => {
-      if (!user) throw new Error("authentication required");
-      if (user.userid !== id)
+      if (!user) throw new Error("Authentication required");
+      if (user.userId !== id)
         throw new Error(
-          "Unauthorized access. Yaou can update only your profile."
+          "Unauthorized access. You can update only your profile."
         );
+
       try {
-        const updatedUser = await findByIdAndUpdate(id, input, { new: true });
+        const updateData = { ...input };
+        if (updateData.password) {
+          updateData.password = await bcrypt.hash(updateData.password, 10);
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(id, updateData, {
+          new: true,
+          runValidators: true,
+        });
+
         if (!updatedUser) throw new Error("User not found");
         return updatedUser;
       } catch (err) {
         throw new Error("Failed to update User: " + err.message);
       }
     },
+
     deleteUser: async (_, { id }, { user }) => {
       if (!user) throw new Error("authentication required");
       if (user.userid !== id)
