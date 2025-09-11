@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 import accountRoutes from "./routes/accountRoutes.js";
+import loanRoutes from "./routes/loanRoutes.js";
 import { typeDefs, resolvers } from "./graphql/schema.js";
 import { authMiddleware } from "./middleware/auth.js";
 
@@ -22,6 +23,7 @@ const startServer = async () => {
   await server.start();
 
   app.use("/api/accounts", accountRoutes);
+  app.use("/api/loans", loanRoutes);
 
   app.use(
     "/graphql",
