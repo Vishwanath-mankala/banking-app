@@ -1,11 +1,15 @@
 import { Component } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
+import { AuthserviceService } from '../../services/authservice.service';
 
 @Component({
   selector: 'app-home',
-  imports: [],
+  imports: [RouterModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
-
+  constructor(public router: Router, public auth: AuthserviceService) {}
 }
+
+
