@@ -11,6 +11,7 @@ import { authMiddleware } from "./middleware/auth.js";
 
 dotenv.config();
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 const server = new ApolloServer({
