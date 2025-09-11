@@ -1,13 +1,21 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { gql } from 'apollo-angular';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthserviceService {
   userurl = 'http://localhost:4000/graphql';
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private jwtHelper: JwtHelperService) {}
+
+  isLoggedIn(): boolean {
+    const token = localStorage.getItem('token');
+    return !!token && !this.jwtHelper.isTokenExpired(token);
+  }
+  logout() {
+    localStorage.removeItem('token');
+  }
 
   signup(name: string, email: string, password: string) {
     const body = {
@@ -41,13 +49,18 @@ export class AuthserviceService {
         }
       }`,
       variables: {
-       email, password ,
+        email,
+        password,
       },
     };
     return this.http.post<any>(this.userurl, body);
   }
+
+  getToken() {
+    return localStorage.getItem('token');
+  }
 }
-  
+
 //   signup(name: string, email: string, password: string) {
 //     const input = {
 //       name,

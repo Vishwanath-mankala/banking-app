@@ -20,6 +20,9 @@ export class LoginComponent {
     this.authService.login(this.email,this.password).subscribe({
       next:(response)=>{
         this.token = response.data.login.token;
+        localStorage.setItem('token', this.token);
+        // const dec = jwt.verify(this.token, "somesecret")
+        // console.log(dec)
         console.log('Login successful:', response);
       },
       error:(error)=>{
