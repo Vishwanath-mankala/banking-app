@@ -10,8 +10,13 @@ import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { provideRouterStore } from '@ngrx/router-store';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
-
+import {
+  HTTP_INTERCEPTORS,
+  provideHttpClient,
+  withInterceptors,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
+import { JWTInterceptor } from './interceptors/jwt.interceptor';
 import { JwtModule, JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
 
 export function tokenGetter() {
@@ -25,8 +30,8 @@ export const appConfig: ApplicationConfig = {
     provideEffects(),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
     provideRouterStore(),
-    provideHttpClient(withInterceptors([])),
-     {
+  provideHttpClient(withInterceptors([JWTInterceptor])),
+    {
       provide: JWT_OPTIONS,
       useValue: {
         tokenGetter,
