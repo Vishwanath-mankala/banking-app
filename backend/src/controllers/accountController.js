@@ -16,7 +16,7 @@ export const createAccount = async (req, res) => {
   try {
     const { error } = accountCreationSchema.validate(req.body);
     if (error) {
-      return res.status(400).json({ error: (error.details = [0].message) });
+      return res.status(400).json({ error: error.details[0].message });
     }
     const user = await User.findById(req.user.userId);
     if (!user) {
