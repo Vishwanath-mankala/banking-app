@@ -7,6 +7,7 @@ export const userTypeDefs = gql
         name:String!
         email:String!
         createdAt:String!
+        role:String!
     }
 
     type AuthPayLoad{

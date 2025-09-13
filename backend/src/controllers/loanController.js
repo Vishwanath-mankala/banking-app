@@ -36,6 +36,14 @@ export const getMyLoans = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+export const getLoans = async (req, res) => {
+  try {
+    const loans = await Loan.find();
+    res.json(loans);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 // @route GET /api/loans/:id
 // @desc Get details of a single loan
