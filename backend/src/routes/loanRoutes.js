@@ -6,6 +6,7 @@ import {
   updateLoanStatus,
   getRepaymentSchedule,
   payLoanInstallment,
+  getLoans
 } from "../controllers/loanController.js";
 import { authMiddleware } from "../middleware/auth.js";
 import adminMiddleware from "../middleware/adminMiddleWare.js";
@@ -13,8 +14,9 @@ import adminMiddleware from "../middleware/adminMiddleWare.js";
 const router = express.Router();
 
 router.post("/apply", authMiddleware, applyForLoan);
-router.get("/myloans", authMiddleware, getMyLoans); // Corrected endpoint for security
+router.get("/myloans", authMiddleware, getMyLoans); 
 router.get("/:id", authMiddleware, getLoanDetails);
+router.get("/admin/allLoans",authMiddleware, adminMiddleware, getLoans);
 router.patch("/:id/status", authMiddleware, adminMiddleware, updateLoanStatus);
 router.get("/:id/repayments", authMiddleware, getRepaymentSchedule);
 // Add this new route

@@ -1,48 +1,64 @@
-<!-- 
-      Navbar Component
-      - bg-white: Sets a white background, equivalent to Bootstrap's bg-light conceptually.
-      - shadow-md: Adds a medium box-shadow for a subtle depth effect.
-    -->
 <nav class="bg-white shadow-md">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16">
       <!-- Logo / App Name -->
       <div class="flex-shrink-0">
-        <a href="#" class="text-2xl font-bold text-indigo-600 tracking-widest">Banking App</a>
+        <a routerLink="/" class="text-2xl font-bold text-indigo-600 tracking-widest">
+          Banking App
+        </a>
       </div>
 
       <!-- Desktop Menu -->
-      <!-- 
-            - hidden lg:flex: The menu is hidden by default and becomes a flex container on large screens (1024px) and up.
-            - This is the Tailwind equivalent of Bootstrap's `navbar-expand-lg`.
-          -->
       <div class="hidden lg:flex lg:items-center lg:space-x-2">
+        <!-- Show when logged OUT -->
         <a
           routerLink="/signup"
-          class="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50 transition duration-150 ease-in-out"
-          >Sign Up</a
+          class="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50 transition"
+          *ngIf="!token"
         >
+          Sign Up
+        </a>
         <a
           routerLink="/login"
-          class="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50 transition duration-150 ease-in-out"
-          >Log In</a
+          class="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50 transition"
+          *ngIf="!token"
         >
+          Log In
+        </a>
+
+        <!-- Show when logged IN -->
         <a
-          [routerLink]="['/home']"
-          class="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50 transition duration-150 ease-in-out"
-          >Home</a
+          routerLink="/home"
+          class="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50 transition"
+          *ngIf="token"
         >
+          Home
+        </a>
+
+        <!-- Only show for Admin role -->
+        <a
+          routerLink="/admin"
+          class="px-4 py-2 rounded-md text-sm font-medium text-red-600 hover:bg-red-50 transition"
+          *ngIf="token"
+        >
+          Manage Loans
+        </a>
+
+        <!-- Logout -->
+        <button
+          (click)="logout()"
+          class="px-4 py-2 rounded-md text-sm font-medium text-white bg-red-500 hover:bg-red-600 transition"
+          *ngIf="token"
+        >
+          Logout
+        </button>
       </div>
     </div>
   </div>
 </nav>
 
-<!-- 
-      This is where Angular will inject the component based on the current route.
-      It does not require any styling changes.
-    -->
 <div class="p-8">
-  <div class="mt-4 p-8 rounded-lg  text-center text-gray-600">
+  <div class="mt-4 p-8 rounded-lg text-center text-gray-600">
     <router-outlet></router-outlet>
   </div>
 </div>

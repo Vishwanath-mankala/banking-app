@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthserviceService } from '../../services/authservice.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-signup',
@@ -15,13 +16,23 @@ export class SignupComponent {
   email!:string;
   password!:string;
 
-  constructor(private authService:AuthserviceService){
+  constructor(private authService:AuthserviceService,
+    private router:Router
+  ){
   }
 
   onSubmit(){
     this.authService.signup(this.name,this.email,this.password).subscribe(
       {
         next: (res)=>{
+          this.authService.login(this.email,this.password).subscribe(
+            {
+              next:(res)=>{
+                this.router.navigate(['/home']);
+              }
+            }
+          )
+          
           console.log(res);
         },
         error:(err)=>{

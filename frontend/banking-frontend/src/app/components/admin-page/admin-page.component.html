@@ -1,0 +1,213 @@
+<div class="admin-dashboard">
+  <!-- Header Section -->
+  <div class="admin-header">
+    <div class="header-content">
+      <h1 class="admin-title">Admin Dashboard</h1>
+      <p class="admin-subtitle">Manage all loan applications and system overview</p>
+    </div>
+    <div class="header-actions">
+      <button class="refresh-btn" (click)="refreshData()" [disabled]="isLoading">
+        <span class="refresh-icon" [class.spinning]="isLoading">🔄</span>
+        {{ isLoading ? 'Refreshing...' : 'Refresh Data' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="stats-grid">
+    <div class="stat-card total">
+      <div class="stat-icon">📊</div>
+      <div class="stat-content">
+        <h3 class="stat-number">{{ stats.total }}</h3>
+        <p class="stat-label">Total Loans</p>
+      </div>
+    </div>
+    <div class="stat-card pending">
+      <div class="stat-icon">⏳</div>
+      <div class="stat-content">
+        <h3 class="stat-number">{{ stats.pending }}</h3>
+        <p class="stat-label">Pending Review</p>
+      </div>
+    </div>
+    <div class="stat-card approved">
+      <div class="stat-icon">✅</div>
+      <div class="stat-content">
+        <h3 class="stat-number">{{ stats.approved }}</h3>
+        <p class="stat-label">Approved</p>
+      </div>
+    </div>
+    <div class="stat-card rejected">
+      <div class="stat-icon">❌</div>
+      <div class="stat-content">
+        <h3 class="stat-number">{{ stats.rejected }}</h3>
+        <p class="stat-label">Rejected</p>
+      </div>
+    </div>
+    <div class="stat-card active">
+      <div class="stat-icon">🟢</div>
+      <div class="stat-content">
+        <h3 class="stat-number">{{ stats.active }}</h3>
+        <p class="stat-label">Active</p>
+      </div>
+    </div>
+    <div class="stat-card closed">
+      <div class="stat-icon">🔒</div>
+      <div class="stat-content">
+        <h3 class="stat-number">{{ stats.closed }}</h3>
+        <p class="stat-label">Closed</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">Loading loan data...</p>
+  </div>
+
+  <!-- Loans Management Section -->
+  <div *ngIf="!isLoading" class="loans-management">
+    <div class="section-header">
+      <h2 class="section-title">Loan Management</h2>
+      <p class="section-subtitle">Review and manage all loan applications grouped by user</p>
+    </div>
+
+    <!-- Grouped Loans -->
+    <div *ngIf="loans && loans.length > 0; else noLoans" class="grouped-loans-container">
+      <div 
+        class="user-loan-group" 
+        *ngFor="let userId of getUserIds()"
+      >
+        <!-- User Header -->
+        <div class="user-header">
+          <div class="user-info">
+            <h3 class="user-title">User ID: {{ userId }}</h3>
+            <p class="user-subtitle">{{ getLoansForUser(userId).length }} loan(s)</p>
+          </div>
+          <div class="user-stats">
+            <span class="user-stat pending" *ngIf="hasPendingLoans(userId)">
+              {{ getPendingLoansForUser(userId) }} Pending
+            </span>
+            <span class="user-stat approved" *ngIf="hasApprovedLoans(userId)">
+              {{ getApprovedLoansForUser(userId) }} Approved
+            </span>
+            <span class="user-stat active" *ngIf="hasActiveLoans(userId)">
+              {{ getActiveLoansForUser(userId) }} Active
+            </span>
+          </div>
+        </div>
+
+        <!-- Loans Table for this User -->
+        <div class="loans-table">
+          <div class="table-header">
+            <div class="header-cell type">Type</div>
+            <div class="header-cell amount">Amount</div>
+            <div class="header-cell tenure">Tenure</div>
+            <div class="header-cell interest">Interest</div>
+            <div class="header-cell status">Current Status</div>
+            <div class="header-cell update">Update Status</div>
+            <div class="header-cell actions">Actions</div>
+            <div class="header-cell id">ID</div>
+          </div>
+          <div class="table-body">
+            <div
+              class="table-row"
+              *ngFor="let loan of getLoansForUser(userId)"
+            >
+              <div class="table-cell type">
+                <span class="loan-type-badge">{{ loan.loanType | titlecase }}</span>
+              </div>
+              <div class="table-cell amount">
+                <span class="amount-value">{{ loan.amount | currency : "USD" : "symbol" : "1.0-0" }}</span>
+              </div>
+              <div class="table-cell tenure">
+                <span class="tenure-value">{{ loan.tenureMonths }}m</span>
+              </div>
+              <div class="table-cell interest">
+                <span class="interest-value">{{ loan.interestRate }}%</span>
+              </div>
+              <div class="table-cell status">
+                <span
+                  class="status-badge"
+                  [ngClass]="getStatusBadgeClass(loan.status)"
+                >
+                  <span
+                    class="status-dot"
+                    [ngClass]="getStatusDotClass(loan.status)"
+                  ></span>
+                  {{ loan.status | titlecase }}
+                </span>
+              </div>
+              <div class="table-cell update">
+                <select
+                  class="status-select"
+                  [value]="loan.status"
+                  (change)="onStatusChange(loan._id, $any($event.target).value)"
+                >
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                  <option value="active">Active</option>
+                  <option value="closed">Closed</option>
+                </select>
+              </div>
+              <div class="table-cell actions">
+                <button 
+                  class="action-btn view-btn"
+                  title="View Details"
+                >
+                  👁️
+                </button>
+                <button 
+                  class="action-btn edit-btn"
+                  title="Edit Loan"
+                >
+                  ✏️
+                </button>
+              </div>
+              <div class="table-cell id">
+                <span class="loan-id" [title]="loan._id">{{ loan._id.substring(0, 8) }}...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Loans State -->
+    <ng-template #noLoans>
+      <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <h3 class="empty-title">No Loans Found</h3>
+        <p class="empty-text">There are currently no loan applications in the system.</p>
+        <button class="refresh-btn" (click)="refreshData()">
+          <span class="refresh-icon">🔄</span>
+          Refresh Data
+        </button>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Quick Actions Panel -->
+  <div class="quick-actions">
+    <h3 class="actions-title">Quick Actions</h3>
+    <div class="actions-grid">
+      <button class="action-card" (click)="refreshData()">
+        <span class="action-icon">🔄</span>
+        <span class="action-text">Refresh All Data</span>
+      </button>
+      <button class="action-card">
+        <span class="action-icon">📊</span>
+        <span class="action-text">Generate Report</span>
+      </button>
+      <button class="action-card">
+        <span class="action-icon">📧</span>
+        <span class="action-text">Send Notifications</span>
+      </button>
+      <button class="action-card">
+        <span class="action-icon">⚙️</span>
+        <span class="action-text">System Settings</span>
+      </button>
+    </div>
+  </div>
+</div>

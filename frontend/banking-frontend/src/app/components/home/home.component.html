@@ -1,6 +1,104 @@
-<p>home works!</p>
+<div class="grid gap-6 max-w-5xl mx-auto px-4 py-6 sm:py-8">
+  <!-- Welcome Banner -->
+  <section class="rounded-xl bg-gradient-to-tr from-emerald-900 to-emerald-800 text-white p-7 ring-1 ring-white/10">
+    <div>
+      <h1 class="m-0 mb-2 text-2xl sm:text-3xl font-bold">Banking made simple</h1>
+      <p class="m-0 mb-5 text-emerald-100">
+        Welcome {{ user?.name }}.
+        <span *ngIf="user?.role === 'customer'">Manage your accounts, move money, and stay secure.</span>
+        <span *ngIf="user?.role === 'admin'">Manage customers, loans, and system operations.</span>
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <!-- Customer actions -->
+        <ng-container *ngIf="user?.role === 'customer'">
+          <button class="rounded-lg bg-bank-500 text-emerald-950 px-4 py-2 font-semibold hover:bg-bank-400 transition"
+                  (click)="router.navigate(['/create-account'])">
+            Open an Account
+          </button>
+          <button class="rounded-lg bg-bank-100 text-emerald-950 px-4 py-2 font-semibold hover:bg-bank-400 transition"
+                  (click)="router.navigate(['/loans'])">
+            Your Loans
+          </button>
+          <button class="rounded-lg border border-emerald-200/60 text-white px-4 py-2 font-semibold bg-transparent hover:bg-white/10 transition"
+                  (click)="router.navigate(['/transactions'])">
+            Make a Transaction
+          </button>
+        </ng-container>
 
-<button (click)="router.navigate(['/create-account'])">create-account</button>
-<button (click)="router.navigate(['/transactions'])">deposit</button>
+        <!-- Admin actions -->
+        <ng-container *ngIf="user?.role === 'admin'">
+          <button class="rounded-lg bg-indigo-500 text-white px-4 py-2 font-semibold hover:bg-indigo-400 transition"
+                  (click)="router.navigate(['/admin'])">
+            Update Loans
+          </button>
+          <!-- <button class="rounded-lg bg-blue-500 text-white px-4 py-2 font-semibold hover:bg-blue-400 transition"
+                  (click)="router.navigate(['/admin/users'])">
+            Manage Users
+          </button> -->
+        </ng-container>
 
-<button (click)="auth.logout()">logout</button>
+        <!-- Logout for both -->
+        <button class="rounded-lg bg-red-500 text-white px-4 py-2 font-semibold hover:bg-red-400 transition"
+                (click)="logout()">
+          Logout
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Profile + Security Section (customer only) -->
+  <section class="grid grid-cols-1 md:grid-cols-2 gap-4" *ngIf="user?.role === 'customer'">
+    <div class="bg-white rounded-xl p-4 shadow-card">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="inline-block rounded-full bg-bank-50 text-bank-700 px-2 py-1 text-xs font-bold">Overview</span>
+        <h3 class="m-0 text-base font-semibold">Your profile</h3>
+      </div>
+      <div class="grid gap-2">
+        <div class="grid grid-cols-[140px_1fr] py-1 border-b border-dashed border-slate-100">
+          <span class="text-slate-500">Name</span>
+          <span class="font-semibold text-right">{{ user?.name }}</span>
+        </div>
+        <div class="grid grid-cols-[140px_1fr] py-1 border-b border-dashed border-slate-100">
+          <span class="text-slate-500">Email</span>
+          <span class="font-semibold text-right">{{ user?.email }}</span>
+        </div>
+        <div class="grid grid-cols-[140px_1fr] py-1 border-b border-dashed border-slate-100">
+          <span class="text-slate-500">Role</span>
+          <span class="font-semibold text-right">{{ user?.role }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl p-4 shadow-card">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="inline-block rounded-full bg-orange-50 text-orange-700 px-2 py-1 text-xs font-bold">Security</span>
+        <h3 class="m-0 text-base font-semibold">Stay protected</h3>
+      </div>
+      <ul class="list-disc pl-2 m-1">
+        <li class="m-1 p-1">Never share your OTP or password.</li>
+        <li class="m-1 p-1">Verify the URL before entering credentials.</li>
+        <li class="m-1 p-1">Enable two-factor authentication when available.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Admin Info Section -->
+  <section class="grid grid-cols-1 md:grid-cols-2 gap-4" *ngIf="user?.role === 'admin'">
+    <div class="bg-white rounded-xl p-4 shadow-card">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="inline-block rounded-full bg-indigo-50 text-indigo-700 px-2 py-1 text-xs font-bold">Admin</span>
+        <h3 class="m-0 text-base font-semibold">System Overview</h3>
+      </div>
+      <div class="grid gap-2">
+        <div class="grid grid-cols-[140px_1fr] py-1 border-b border-dashed border-slate-100">
+          <span class="text-slate-500">Total Users</span>
+          <span class="font-semibold text-right">{{ totalUsers }}</span>
+        </div>
+        <!-- <div class="grid grid-cols-[140px_1fr] py-1 border-b border-dashed border-slate-100">
+          <span class="text-slate-500">Active Loans</span>
+          <span class="font-semibold text-right">{{ totalLoans }}</span>
+        </div> -->
+      </div>
+    </div>
+  </section>
+</div>

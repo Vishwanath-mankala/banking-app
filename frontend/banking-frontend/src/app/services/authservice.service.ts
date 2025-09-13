@@ -7,7 +7,8 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 })
 export class AuthserviceService {
   userurl = 'http://localhost:4000/graphql';
-  constructor(private http: HttpClient, private jwtHelper: JwtHelperService) {}
+  _id!: string;
+  constructor(private http: HttpClient, private jwtHelper: JwtHelperService) {}  
 
   isLoggedIn(): boolean {
     const token = localStorage.getItem('token');
@@ -16,6 +17,51 @@ export class AuthserviceService {
   logout() {
     localStorage.removeItem('token');
   }
+
+  getUserId(): string | null {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decoded = this.jwtHelper.decodeToken(token);
+      return decoded?.userId || null;
+    }
+    return null;
+  }
+
+  getUsers(){
+    const body ={
+      query: `
+      query{
+      users{
+      id
+      name
+      email
+      role
+      }
+      }
+      `
+    };
+    return this.http.post<{ data: { users: any[] } }>(this.userurl, body);
+  }
+  getUser(id: string) {
+    const body = {
+      query: `
+        query ($id: ID!) {
+          user(id: $id) {
+            id
+            name
+            email
+            role
+          }
+        }
+      `,
+      variables: {
+        id: id
+      }
+    };
+  
+    return this.http.post<any>(this.userurl, body);
+  }
+  
 
   signup(name: string, email: string, password: string) {
     const body = {

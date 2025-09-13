@@ -1,0 +1,179 @@
+<div class="max-w-5xl mx-auto px-4 py-6 sm:py-8 grid gap-6">
+
+  <!-- Loan Application Form -->
+  <div class="loan-form-container">
+    <h2 class="loan-form-title">Apply for a Loan</h2>
+    <p class="loan-form-subtitle">Fill in the details below to submit your loan application</p>
+    
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="loanType" class="form-label">
+          Loan Type
+        </label>
+        <select
+          name="loanType"
+          id="loanType"
+          [(ngModel)]="loanType"
+          class="form-select"
+        >
+          <option value="home">Home Loan</option>
+          <option value="personal">Personal Loan</option>
+          <option value="education">Education Loan</option>
+        </select>
+      </div>
+  
+      <div class="form-group">
+        <label for="amount" class="form-label">
+          Loan Amount ($)
+        </label>
+        <input
+          type="number"
+          id="amount"
+          [(ngModel)]="amount"
+          placeholder="Enter loan amount"
+          class="form-input"
+        />
+      </div>
+  
+      <div class="form-group">
+        <label for="tenureMonths" class="form-label">
+          Tenure (Months)
+        </label>
+        <input
+          type="number"
+          id="tenureMonths"
+          [(ngModel)]="tenureMonths"
+          placeholder="Enter tenure in months"
+          class="form-input"
+        />
+      </div>
+  
+      <div class="form-group">
+        <label for="interestRate" class="form-label">
+          Interest Rate (%)
+        </label>
+        <input
+          type="number"
+          id="interestRate"
+          [(ngModel)]="interestRate"
+          placeholder="Enter interest rate"
+          step="0.01"
+          class="form-input"
+        />
+      </div>
+    </div>
+  
+    <button
+      class="apply-button"
+      (click)="applyForLoan({loanType,amount,tenureMonths,interestRate})"
+    >
+      Apply for a Loan
+    </button>
+  </div>
+
+  <!-- Loans Header -->
+  <div class="loans-header">
+    <h1 class="loans-title">Your Loans</h1>
+    <p class="loans-subtitle">Track loan status, interest, and tenure in one place.</p>
+  </div>
+
+  <!-- Loans Table Section -->
+  <section *ngIf="loans && loans.length; else state">
+    <div class="overflow-hidden rounded-xl bg-white shadow-card ring-1 ring-slate-100">
+      
+      <div class="grid grid-cols-12 gap-4 px-4 py-3 bg-slate-50 text-slate-600 text-sm font-medium">
+        <div class="col-span-2">Type</div>
+        <div class="col-span-2 text-right">Amount</div>
+        <div class="col-span-1 text-right">Tenure</div>
+        <div class="col-span-1 text-right">Interest</div>
+        <div class="col-span-2">Status</div>
+        <div class="col-span-1 text-right">ID</div>
+        <div class="col-span-3 text-center">Action</div>
+      </div>
+  
+      <div class="divide-y divide-slate-100">
+        <div
+          class="grid grid-cols-12 gap-4 px-4 py-3 items-center"
+          *ngFor="let loan of loans"
+        >
+          <div class="col-span-2 font-semibold text-emerald-900">
+            {{ loan.loanType | titlecase }}
+          </div>
+          <div class="col-span-2 text-right font-semibold">
+            {{ loan.amount | currency : "USD" : "symbol" : "1.0-0" }}
+          </div>
+          <div class="col-span-1 text-right text-slate-700">
+            {{ loan.tenureMonths }} mo
+          </div>
+          <div class="col-span-1 text-right text-slate-700">
+            {{ loan.interestRate }}%
+          </div>
+          <div class="col-span-2">
+            <span
+              class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-xs font-bold"
+              [ngClass]="{
+                'bg-green-50 text-green-700': loan.status === 'approved',
+                'bg-yellow-50 text-yellow-700': loan.status === 'pending',
+                'bg-red-50 text-red-700': loan.status === 'rejected'
+              }"
+            >
+              <span
+                class="h-1.5 w-1.5 rounded-full"
+                [ngClass]="{
+                  'bg-green-600': loan.status === 'approved',
+                  'bg-yellow-600': loan.status === 'pending',
+                  'bg-red-600': loan.status === 'rejected'
+                }"
+              ></span>
+              {{ loan.status | titlecase }}
+            </span>
+          </div>
+          <div class="col-span-1 text-right text-slate-400 truncate" title="{{ loan._id }}">
+            {{ loan._id }}
+          </div>
+          <div class="col-span-3 flex justify-center">
+            <button 
+              class="rounded-lg bg-bank-500 text-emerald-950 px-3 py-1.5 text-sm font-semibold hover:bg-bank-400 transition"
+              (click)="makeMonthlyPayment(loan._id,1)">
+              Make Payment
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ng-template #state>
+    <!-- Loading State -->
+    <div
+      class="loading-skeleton"
+      *ngIf="loans === undefined; else empty"
+    >
+      <div class="space-y-3">
+        <div class="skeleton-line w-48"></div>
+        <div class="skeleton-line w-full"></div>
+        <div class="skeleton-line w-11/12"></div>
+        <div class="skeleton-line w-10/12"></div>
+      </div>
+    </div>
+    
+    <!-- Empty State -->
+    <ng-template #empty>
+      <div class="empty-state">
+        <h3 class="empty-state-title">
+          No loans yet
+        </h3>
+        <p class="empty-state-text">
+          When you apply for a loan, it will show up here.
+        </p>
+        <div class="mt-4">
+          <button
+            class="apply-button"
+          >
+            Apply for a Loan
+          </button>
+        </div>
+      </div>
+    </ng-template>
+  </ng-template>
+</div>
