@@ -11,7 +11,8 @@
       <!-- Desktop Menu -->
       <div class="hidden lg:flex lg:items-center lg:space-x-2">
         <!-- Show when logged OUT -->
-        <a
+      <ng-container *ngIf="!(auth.isLoggedIn$ | async)">
+          <a
           routerLink="/signup"
           class="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50 transition"
           *ngIf="!token"
@@ -25,15 +26,18 @@
         >
           Log In
         </a>
+        </ng-container>
 
         <!-- Show when logged IN -->
-        <a
+        @if ((auth.isLoggedIn$ | async)) {
+          <a
           routerLink="/home"
           class="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50 transition"
-          *ngIf="token"
+          
         >
           Home
-        </a>
+        </a>  
+        }
 
         <!-- Only show for Admin role -->
         <a

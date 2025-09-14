@@ -12,11 +12,13 @@ import { AuthserviceService } from '../../services/authservice.service';
 })
 export class HomeComponent {
   user!: any;
+  token:string|null = null;
   users: any[] = [];   // ✅ make it a real array
   totalUsers: number = 0; // ✅ initialize with 0
 
   constructor(public router: Router, public auth: AuthserviceService) {
     const id = this.auth.getUserId();
+    this.token  = localStorage.getItem('token') || null
     this.auth.getUsers().subscribe({
       next:(res)=>{
         this.users = res.data.users;   // ✅ GraphQL response is wrapped inside res.data
