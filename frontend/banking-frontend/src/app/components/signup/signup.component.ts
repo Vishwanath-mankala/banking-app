@@ -29,6 +29,9 @@ export class SignupComponent {
             {
               next:(res)=>{
                 this.router.navigate(['/home']);
+              },
+              error:(err)=>{
+                this.router.navigate(['/login'])
               }
             }
           )

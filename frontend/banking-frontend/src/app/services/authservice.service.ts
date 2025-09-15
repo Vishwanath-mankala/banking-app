@@ -1,5 +1,3 @@
-// src/app/services/authservice.service.ts
-
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
@@ -11,16 +9,13 @@ import { BehaviorSubject, tap } from 'rxjs';
 export class AuthserviceService {
   userurl = 'http://localhost:4000/graphql';
 
-  // 👇 1. Declare the property here without initializing it.
   private loggedIn: BehaviorSubject<boolean>;
 
-  // Expose the state as a public Observable.
   public isLoggedIn$: BehaviorSubject<boolean>;
 
   constructor(private http: HttpClient, private jwtHelper: JwtHelperService) {
-    // 👇 2. Initialize it inside the constructor, now that jwtHelper is available.
     this.loggedIn = new BehaviorSubject<boolean>(this.isLoggedIn());
-    this.isLoggedIn$ = this.loggedIn; // Assign the public observable
+    this.isLoggedIn$ = this.loggedIn; 
   }
 
   isLoggedIn(): boolean {
